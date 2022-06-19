@@ -39,7 +39,6 @@ def assign_char(num):
         case 0:
             return '\''
 
-
 for y in range(0, img.size[1] - chunk_size_y, chunk_size_y):
     for x in range(0, img.size[0] - chunk_size_x, chunk_size_x):
         sum = 0;
