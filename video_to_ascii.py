@@ -42,6 +42,7 @@ video_capture = cv2.VideoCapture('videos/' + filename)
 fps = video_capture.get(cv2.CAP_PROP_FPS)
 could_read, image = video_capture.read()
 frame_buffer = []
+looping = (input('Loop? Y/N ') == 'Y')
 
 print('Loading...')
 while could_read:
@@ -52,9 +53,13 @@ print('Done!')
 input('Press enter to play... ')
 print('Playing now!')
 
-for frame in frame_buffer:
-    print(chr(27) + "[2J")
-    print(frame)
-    sleep(1/fps)
+while True:
+    for frame in frame_buffer:
+        print(chr(27) + "[2J")
+        print(frame)
+        sleep(1/fps)
+
+    if not looping: 
+        break
 
 video_capture.release()
