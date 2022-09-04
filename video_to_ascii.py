@@ -1,5 +1,5 @@
 import cv2
-from time import sleep
+from time import sleep, time
 
 
 def assign_char(num):
@@ -32,34 +32,28 @@ def img_to_ascii(img):
 
     for x in range(0, img.shape[0] - chunk_size_x, chunk_size_x):
         for y in range(0, img.shape[1] - chunk_size_y, chunk_size_y):
-            output += assign_char(img[x, y]);
+            output += str(assign_char(img[x, y]));
         output += "\n";
 
     return output
 
 filename = input('Enter a file name: ')
-video_capture = cv2.VideoCapture('videos/' + filename)
+looping = (input('Loop? Y/N ') == 'Y')
+video_capture = cv2.VideoCapture(filename)
 fps = video_capture.get(cv2.CAP_PROP_FPS)
 could_read, image = video_capture.read()
-frame_buffer = []
-looping = (input('Loop? Y/N ') == 'Y')
+first = True
 
-print('Loading...')
-while could_read:
-    frame_buffer.append(img_to_ascii(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)))
-    could_read, image = video_capture.read()
-
-print('Done!')
-input('Press enter to play... ')
-print('Playing now!')
-
-while True:
-    for frame in frame_buffer:
+while looping or first:
+    while could_read:
+        start = time() 
+        frame = (img_to_ascii(cv2.cvtColor(image, cv2.COLOR_BGR2GRAY)))
         print(chr(27) + "[2J")
         print(frame)
-        sleep(1/fps)
+        could_read, image = video_capture.read()
+        offset = time() - start
+        sleep(max(1/fps - offset, 0))
+    first = False
+    video_capture.release()
+    video_capture = cv2.VideoCapture(filename)
 
-    if not looping: 
-        break
-
-video_capture.release()
